@@ -22,7 +22,7 @@
                 <div class="flex items-center space-x-3">
                     <div id="sidebar-brand" class="sidebar-text transition-opacity duration-200">
                         <h1 class="font-bold text-lg tracking-wider text-emerald-400 leading-tight">SIBEN</h1>
-                        <p class="text-[10px] text-gray-400 uppercase tracking-tight">Panel Admin</p>
+                        <p class="text-[10px] text-gray-400 uppercase tracking-tight">BENDAHARA PENERIMAAN</p>
                     </div>
                 </div>
 

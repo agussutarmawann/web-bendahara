@@ -23,8 +23,41 @@ class RegisterController extends Controller
             ->orderBy('tanggal', 'asc')
             ->get();
 
+        // 3. HITUNG AKUMULASI PER KATEGORI (Hanya untuk bulan & tahun yang aktif)
+        $totalSampah = Register::whereMonth('tanggal', $bulanAktif)
+            ->whereYear('tanggal', $tahunAktif)
+            ->where('kategori', 'Pelayanan Persampahan')
+            ->sum('jumlah');
+        
+        $totalAset = Register::whereMonth('tanggal', $bulanAktif)
+            ->whereYear('tanggal', $tahunAktif)
+            ->where('kategori', 'Pemanfaatan Aset Daerah')
+            ->sum('jumlah');
+
+        $totalPdam = Register::whereMonth('tanggal', $bulanAktif)
+            ->whereYear('tanggal', $tahunAktif)
+            ->where('kategori', 'PDAM')
+            ->sum('jumlah');
+        
+        $totalTpa = Register::wheremonth('tanggal', $bulanAktif)
+            ->whereYear('tanggal', $tahunAktif)
+            ->where('kategori', 'TPA')
+            ->sum('jumlah');
+        
+        // Total keseluruhan gabungan 4 kategori
+        $totalKeseluruhan = $totalSampah + $totalAset + $totalPdam + $totalTpa;
+
         // Mengirimkan data ke halaman view Blade
-        return view('register.index', compact('registers', 'bulanAktif', 'tahunAktif'));
+        return view('register.index', compact(
+            'registers',
+            'bulanAktif', 
+            'tahunAktif',
+            'totalSampah',
+            'totalAset',
+            'totalPdam',
+            'totalTpa',
+            'totalKeseluruhan',
+        ));
     }
 
     /**

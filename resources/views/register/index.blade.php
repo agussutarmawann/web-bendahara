@@ -107,7 +107,60 @@
                     </table>
                 </div>
             </div>
-
+            <div class="mt-8 space-y-6">
+                <div class="border-t border-gray-200 pt-6">
+                    <h3 class="text-base font-bold text-emerald-950 uppercase tracking-wider mb-4 flex items-center gap-2">
+                        📊 Rekapitulasi Pendapatan Periode Ini
+                    </h3>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-between transition hover:shadow-md">
+                        <div>
+                            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Persampahan</p>
+                            <h4 class="text-lg font-bold text-emerald-950 mt-1">
+                                Rp {{ number_format($totalSampah, 0, ',', '.') }}
+                            </h4>
+                        </div>
+                        <div class="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-between text-xl p-2.5 shadow-inner">🗑️</div>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-between transition hover:shadow-md">
+                        <div>
+                            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Aset Daerah</p>
+                            <h4 class="text-lg font-bold text-emerald-950 mt-1">
+                                Rp {{ number_format($totalAset, 0, ',', '.') }}
+                            </h4>
+                        </div>
+                        <div class="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-between text-xl p-2.5 shadow-inner">🏢</div>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-between transition hover:shadow-md">
+                        <div>
+                            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Retribusi PDAM</p>
+                            <h4 class="text-lg font-bold text-emerald-950 mt-1">
+                                Rp {{ number_format($totalPdam, 0, ',', '.') }}
+                            </h4>
+                        </div>
+                        <div class="w-10 h-10 bg-sky-50 rounded-xl flex items-center justify-between text-xl p-2.5 shadow-inner">🚰</div>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-between transition hover:shadow-md">
+                        <div>
+                            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Retribusi TPA</p>
+                            <h4 class="text-lg font-bold text-emerald-950 mt-1">
+                                Rp {{ number_format($totalTpa, 0, ',', '.') }}
+                            </h4>
+                        </div>
+                        <div class="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-between text-xl p-2.5 shadow-inner">🚛</div>
+                    </div>
+                </div>
+                <div class="bg-gradient-to-r from-emerald-800 to-emerald-950 p-6 rounded-2xl shadow-md text-white flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-bold text-emerald-300 uppercase tracking-widest">Total Keseluruhan Pendapatan (Bulan Ini)</p>
+                        <h2 class="text-3xl font-black mt-1 tracking-tight">
+                            Rp {{ number_format($totalKeseluruhan, 0, ',', '.') }}
+                        </h2>
+                    </div>
+                    <div class="text-4xl  font-mono select-none font-bold">TOTAL</div>
+                </div>
+            </div>
         </div>
     </div>
 </x-app-layout>

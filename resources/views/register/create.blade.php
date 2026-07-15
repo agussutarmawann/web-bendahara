@@ -1,8 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-bold text-emerald-950 text-lg leading-tight">
-            {{ __('Tambah Transaksi Harian') }}
-        </h2>
+        Register Pendapatan
     </x-slot>
 
     <div class="py-8">
