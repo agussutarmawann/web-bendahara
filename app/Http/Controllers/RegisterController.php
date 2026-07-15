@@ -118,4 +118,45 @@ class RegisterController extends Controller
             'tahun' => Carbon::parse($request->tanggal)->format('Y'),
         ])->with('success', 'Data Transaksi Harian Berhasil Disimpan!');
     }
+
+
+    public function print(Request $request)
+    {
+        // 1. Ambil filter bulan dan tahun aktif dari request (default bulan & tahun ini)
+        $bulanAktif = $request->input('bulan', date('m'));
+        $tahunAktif = $request->input('tahun', date('Y'));
+
+        // 2. Ambil data harian untuk dicetak
+        $registers = Register::whereMonth('tanggal', $bulanAktif)
+            ->whereYear('tanggal', $tahunAktif)
+            ->orderBy('tanggal', 'asc')
+            ->get();
+
+        // 3. Hitung akumulasi untuk tabel rekapitulasi di halaman cetak
+        $totalSampah = Register::whereMonth('tanggal', $bulanAktif)->whereYear('tanggal', $tahunAktif)->where('kategori', 'Pelayanan Persampahan')->sum('jumlah');
+        $totalAset = Register::whereMonth('tanggal', $bulanAktif)->whereYear('tanggal', $tahunAktif)->where('kategori', 'Pemanfaatan Aset Daerah')->sum('jumlah');
+        $totalPdam = Register::whereMonth('tanggal', $bulanAktif)->whereYear('tanggal', $tahunAktif)->where('kategori', 'PDAM')->sum('jumlah');
+        $totalTpa = Register::whereMonth('tanggal', $bulanAktif)->whereYear('tanggal', $tahunAktif)->where('kategori', 'TPA')->sum('jumlah');
+        $totalKeseluruhan = $totalSampah + $totalAset + $totalPdam + $totalTpa;
+
+        // Array nama bulan untuk mempermudah penamaan judul laporan cetak
+        $namaBulan = [
+            '01' => 'Januari', '02' => 'Februari', '03' => 'Maret', '04' => 'April', 
+            '05' => 'Mei', '06' => 'Juni', '07' => 'Juli', '08' => 'Agustus', 
+            '09' => 'September', '10' => 'Oktober', '11' => 'November', '12' => 'Desember'
+        ];
+        $bulanTeks = $namaBulan[$bulanAktif] ?? 'Unknown';
+
+        return view('register.print', compact(
+            'registers',
+            'bulanAktif',
+            'tahunAktif',
+            'bulanTeks',
+            'totalSampah',
+            'totalAset',
+            'totalPdam',
+            'totalTpa',
+            'totalKeseluruhan',
+        ));
+    }
 }

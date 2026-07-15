@@ -61,4 +61,5 @@ Route::middleware('auth')->group(function () {
     Route::get('/register-pendapatan', [RegisterController::class, 'index'])->name('register.index');
     Route::get('/register-pendapatan/tambah', [RegisterController::class, 'create'])->name('register.create');
     Route::post('/register-pendapatan', [RegisterController::class, 'store'])->name('register.store');
+    Route::get('/register-pendapatan/cetak', [RegisterController::class, 'print'])->name('register.print');
 });

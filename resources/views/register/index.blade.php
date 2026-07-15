@@ -34,10 +34,15 @@
                             </option>
                             @endfor
                     </select>
+                <a href="{{ route('register.print', ['bulan' => $bulanAktif, 'tahun' => $tahunAktif]) }}"
+                    target="_blank"
+                    class="inline-flex items-center gap-2 px-4 py-2 bg-white shadow-sm border  font-medium text-sm rounded-2xl shadow-sm transition">
+                    🖨️ Cetak Laporan
+                </a>
                 </form>
-
+                
                 <a href="{{ route('register.create') }}" class="inline-flex items-center px-4 py-2 bg-emerald-600 border border-transparent rounded-xl font-semibold text-xs text-white uppercase tracking-widest hover:bg-emerald-700 active:bg-emerald-850 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                    ➕ Tambah Transaksi Harian
+                    ➕ Tambah Transaksi
                 </a>
             </div>
 
