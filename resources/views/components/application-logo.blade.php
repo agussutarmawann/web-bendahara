@@ -1,0 +1,1 @@
+<img src="{{ asset('images/dlh.png') }}" alt="Logo Aplikasi" class="h-40 w-auto">
