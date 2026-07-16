@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'SIBEN') }}</title>
+    <title>{{ config('app.name', 'Laravel') }}</title>
 
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
@@ -110,19 +110,18 @@
                                 x-transition:leave-end="transform opacity-0 scale-95"
                                 class="absolute right-0 mt-2 w-48 rounded-xl shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 border border-gray-100 z-30"
                                 style="display: none;">
-
                                 <div class="px-4 py-2 border-b border-gray-100">
                                     <p class="text-xs text-gray-400">Masuk sebagai:</p>
                                     <p class="text-xs font-bold text-gray-700 truncate">{{ Auth::user()->email }}</p>
                                 </div>
-
                                 <a href="{{ route('profile.edit') }}" class="block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 hover:bg-gray-50 focus:outline-none transition duration-150 ease-in-out">
                                     👤 Pengaturan Profil
                                 </a>
-
-                                <form method="POST" action="{{ route('logout') }}">
+                                <form method="POST" action="{{ route('logout') }}" id="logout-form">
                                     @csrf
-                                    <button type="submit" class="block w-full px-4 py-2 text-left text-sm leading-5 text-red-600 hover:bg-red-50 focus:outline-none transition duration-150 ease-in-out border-t border-gray-100 mt-1">
+                                    <button type="button"
+                                        @click="$dispatch('trigger-logout')"
+                                        class="block w-full px-4 py-2 text-left text-sm leading-5 text-red-600 hover:bg-red-50 focus:outline-none transition duration-150 ease-in-out border-t border-gray-100 mt-1">
                                         🚪 Keluar Sistem
                                     </button>
                                 </form>
@@ -139,6 +138,7 @@
 
     </div>
     <div x-data="{ isLoggingOut: false }"
+        @trigger-logout.window="isLoggingOut = true; setTimeout(() => document.getElementById('logout-form').submit(), 600)"
         x-show="isLoggingOut"
         x-transition.opacity
         class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/65 backdrop-blur-sm"
@@ -192,4 +192,5 @@
         });
     </script>
 </body>
+
 </html>

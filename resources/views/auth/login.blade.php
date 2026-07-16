@@ -114,20 +114,37 @@
         </div>
 
         <!-- Input Kata Sandi -->
-        <div class="mb-5">
-            <label for="password" class="block text-sm font-semibold text-gray-700 mb-1">Kata Sandi</label>
-            <div class="relative">
-                <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">🔒</span>
-                <input id="password" type="password" name="password" required
-                    class="block w-full pl-11 pr-10 py-3 bg-blue-50/30 border border-gray-300 rounded-xl text-gray-900 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition shadow-sm text-sm"
-                    placeholder="••••••••••••">
+        <div class="space-y-1">
+            <label class="block text-sm font-semibold text-gray-700">Password</label>
+
+            <div x-data="{ show: false }" class="relative mt-1">
+
+                <input :type="show ? 'text' : 'password'"
+                    name="password"
+                    id="password"
+                    required
+                    placeholder="••••••••"
+                    class="w-full rounded-xl border-gray-300 pr-11 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 text-sm">
+
+                <button type="button"
+                    @click="show = !show"
+                    class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-gray-405 hover:text-emerald-600 transition-colors duration-150 focus:outline-none">
+
+                    <svg x-show="!show" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+
+                    <svg x-show="show" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="display: none;">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a10.025 10.025 0 014.132-5.4M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 21l-18-18" />
+                    </svg>
+
+                </button>
             </div>
-            <!-- Menampilkan pesan error validasi password dari Laravel -->
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
 
         <!-- Opsi Ingat Saya & Lupa Password -->
-        <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center justify-between mb-6 mt-5">
             <label class="inline-flex items-center">
                 <input type="checkbox" name="remember" class="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500 w-4 h-4">
                 <span class="ms-2 text-xs text-gray-600 font-medium">Ingat Saya</span>
