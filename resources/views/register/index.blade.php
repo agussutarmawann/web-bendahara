@@ -34,13 +34,13 @@
                             </option>
                             @endfor
                     </select>
-                <a href="{{ route('register.print', ['bulan' => $bulanAktif, 'tahun' => $tahunAktif]) }}"
-                    target="_blank"
-                    class="inline-flex items-center gap-2 px-4 py-2 bg-white shadow-sm border  font-medium text-sm rounded-2xl shadow-sm transition">
-                    🖨️ Cetak Laporan
-                </a>
+                    <a href="{{ route('register.print', ['bulan' => $bulanAktif, 'tahun' => $tahunAktif]) }}"
+                        target="_blank"
+                        class="inline-flex items-center gap-2 px-4 py-2 bg-white shadow-sm border  font-medium text-sm rounded-2xl shadow-sm transition">
+                        🖨️ Cetak Laporan
+                    </a>
                 </form>
-                
+
                 <a href="{{ route('register.create') }}" class="inline-flex items-center px-4 py-2 bg-emerald-600 border border-transparent rounded-xl font-semibold text-xs text-white uppercase tracking-widest hover:bg-emerald-700 active:bg-emerald-850 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition ease-in-out duration-150">
                     ➕ Tambah Transaksi
                 </a>
@@ -168,4 +168,34 @@
             </div>
         </div>
     </div>
+    @if(session('success'))
+    <div x-data="{ showSuccess: true }"
+        x-show="showSuccess"
+        x-transition.opacity
+        class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/60 backdrop-blur-sm">
+
+        <div x-show="showSuccess"
+            x-transition.scale.85
+            class="bg-white p-6 rounded-2xl shadow-2xl flex flex-col items-center space-y-4 max-w-xs w-full mx-4 border border-emerald-100 text-center animate-fade-in">
+
+            <div class="h-16 w-16 bg-emerald-50 rounded-full flex items-center justify-center border border-emerald-200 shadow-inner">
+                <span class="text-3xl text-emerald-600 animate-bounce">✅</span>
+            </div>
+
+            <div>
+                <h3 class="text-base font-bold text-gray-900 tracking-wide">Berhasil Disimpan!</h3>
+                <p class="text-xs text-gray-500 mt-1 leading-relaxed">
+                    {{ session('success') }}
+                </p>
+            </div>
+
+            <div class="w-full pt-2">
+                <button @click="showSuccess = false"
+                    class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-750 text-white font-semibold text-xs rounded-xl shadow-md transition-all duration-150 tracking-wider uppercase">
+                    Mantap, Oke!
+                </button>
+            </div>
+        </div>
+    </div>
+    @endif
 </x-app-layout>

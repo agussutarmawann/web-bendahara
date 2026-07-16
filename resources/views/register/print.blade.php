@@ -104,15 +104,15 @@
         <div class="ttd-box">
             <p>Mengetahui,<br>Kepala Dinas Lingkungan Hidup</p>
             <div class="ttd-space"></div>
-            <p class="font-bold" style="text-decoration: underline;">( Nama Kepala Dinas )</p>
-            <p style="margin-top: -10px;">NIP. .........................</p>
+            <p class="font-bold" style="text-decoration: underline;"><u>I Gede Putra Aryana, S.Sos, M.A.P</u></p>
+            <p style="margin-top: -10px;">NIP. 197005151993031010</p>
         </div>
         
         <div class="ttd-box">
             <p>Buleleng, {{ date('d') }} {{ $bulanTeks }} {{ $tahunAktif }}<br>Bendahara Penerimaan</p>
             <div class="ttd-space"></div>
-            <p class="font-bold" style="text-decoration: underline;">( Nama Bendahara )</p>
-            <p style="margin-top: -10px;">NIP. .........................</p>
+            <p class="font-bold" style="text-decoration: underline;">Nyoman Riani</p>
+            <p style="margin-top: -10px;">NIP. 196901112007012022</p>
         </div>
     </div>
 

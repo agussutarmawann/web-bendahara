@@ -116,7 +116,7 @@ class RegisterController extends Controller
         return redirect()->route('register.index', [
             'bulan' => Carbon::parse($request->tanggal)->format('m'),
             'tahun' => Carbon::parse($request->tanggal)->format('Y'),
-        ])->with('success', 'Data Transaksi Harian Berhasil Disimpan!');
+        ])->with('success', 'Data transaksi pendapatan harian baru telah berhasil direkam ke dalam sistem SIBEN.');
     }
 
 
