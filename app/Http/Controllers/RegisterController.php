@@ -28,7 +28,7 @@ class RegisterController extends Controller
             ->whereYear('tanggal', $tahunAktif)
             ->where('kategori', 'Pelayanan Persampahan')
             ->sum('jumlah');
-        
+
         $totalAset = Register::whereMonth('tanggal', $bulanAktif)
             ->whereYear('tanggal', $tahunAktif)
             ->where('kategori', 'Pemanfaatan Aset Daerah')
@@ -38,19 +38,19 @@ class RegisterController extends Controller
             ->whereYear('tanggal', $tahunAktif)
             ->where('kategori', 'PDAM')
             ->sum('jumlah');
-        
+
         $totalTpa = Register::wheremonth('tanggal', $bulanAktif)
             ->whereYear('tanggal', $tahunAktif)
             ->where('kategori', 'TPA')
             ->sum('jumlah');
-        
+
         // Total keseluruhan gabungan 4 kategori
         $totalKeseluruhan = $totalSampah + $totalAset + $totalPdam + $totalTpa;
 
         // Mengirimkan data ke halaman view Blade
         return view('register.index', compact(
             'registers',
-            'bulanAktif', 
+            'bulanAktif',
             'tahunAktif',
             'totalSampah',
             'totalAset',
@@ -116,7 +116,7 @@ class RegisterController extends Controller
         return redirect()->route('register.index', [
             'bulan' => Carbon::parse($request->tanggal)->format('m'),
             'tahun' => Carbon::parse($request->tanggal)->format('Y'),
-        ])->with('success', 'Data transaksi pendapatan harian baru telah berhasil direkam ke dalam sistem SIBEN.');
+        ])->with('success');
     }
 
 
@@ -141,9 +141,18 @@ class RegisterController extends Controller
 
         // Array nama bulan untuk mempermudah penamaan judul laporan cetak
         $namaBulan = [
-            '01' => 'Januari', '02' => 'Februari', '03' => 'Maret', '04' => 'April', 
-            '05' => 'Mei', '06' => 'Juni', '07' => 'Juli', '08' => 'Agustus', 
-            '09' => 'September', '10' => 'Oktober', '11' => 'November', '12' => 'Desember'
+            '01' => 'Januari',
+            '02' => 'Februari',
+            '03' => 'Maret',
+            '04' => 'April',
+            '05' => 'Mei',
+            '06' => 'Juni',
+            '07' => 'Juli',
+            '08' => 'Agustus',
+            '09' => 'September',
+            '10' => 'Oktober',
+            '11' => 'November',
+            '12' => 'Desember'
         ];
         $bulanTeks = $namaBulan[$bulanAktif] ?? 'Unknown';
 
@@ -158,5 +167,62 @@ class RegisterController extends Controller
             'totalTpa',
             'totalKeseluruhan',
         ));
+    }
+
+    /**
+     * Menampilkan Form Edit Data
+     */
+    public function edit(string $id)
+    {
+        // Mengambil data berdasarkan ID, jika tidak ada otomatis error 404
+        $register = Register::findOrFail($id);
+
+        // 2. Kirim data ke view edit
+        return view('register.edit', compact('register'));
+    }
+
+    /**
+     * Memproses Pembaruan Data di Database
+     */
+    public function update(Request $request, string $id)
+    {
+        // 1. Validasi data inputan terlebih dahulu
+        $request->validate([
+            'tanggal' => 'required|date',
+            'wajib_retribusi' => 'required|string|max:255',
+            'kategori' => 'required|string',
+            'jumlah' => 'required|numeric|min:0',
+        ]);
+
+        // 2. Cari data lama di database
+        $register = Register::findOrFail($id);
+
+        // 3. Update data dengan data baru dari form
+        $register->update([
+            'tanggal' => $request->tanggal,
+            'wajib_retribusi' => $request->wajib_retribusi,
+            'kategori' => $request->kategori,
+            'jumlah' => $request->jumlah,
+        ]);
+
+        // 4. Redirect kembali ke halaman utama dengan Flash Session Sukses
+        return redirect()->route('register.index')
+            ->with('success', 'Data transaksi berhasil diperbaharui!');
+    }
+
+    /**
+     * Menghapus Data dari Database
+     */
+    public function destroy(string $id)
+    {
+        // 1. Cari data yang akan dihapus
+        $register = Register::findorFail($id);
+
+        // 2. Eksekusi perintah hapus
+        $register->delete();
+
+        // 3. Kirim status sukses kembali ke halaman tabel
+        return redirect()->route('register.index')
+            ->with('success', 'Data berhasil dihapus dari sistem!');
     }
 }

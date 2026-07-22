@@ -21,20 +21,28 @@
         .ttd-box { width: 200px; text-align: center; }
         .ttd-space { height: 70px; }
         
-        /* CSS khusus saat printer aktif */
+        /* CSS KHUSUS SAAT CETAK / PRINTER AKTIF */
         @media print {
             body { padding: 0; }
-            .no-print { display: none; }
+            
+            /* Ditegaskan dengan !important agar tidak terabaikan */
+            .no-print, .no-print * { 
+                display: none !important; 
+                height: 0 !important;
+                visibility: hidden !important;
+            }
         }
     </style>
 </head>
 <body>
 
+    <!-- CONTAINER TOMBOL (DIBERI CLASS .no-print) -->
     <div class="no-print" style="margin-bottom: 20px; background: #e2e8f0; padding: 10px; border-radius: 8px; display: flex; gap: 10px;">
         <button onclick="window.print()" style="background: #047857; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold;">🖨️ Cetak Sekarang</button>
-        <a href="{{ route('register.index', ['bulan' => $bulanAktif, 'tahun' => $tahunAktif]) }}" style="background: #475569; color: white; text-decoration: none; padding: 8px 16px; border-radius: 4px; font-size: 12px;">⬅️ Kembali ke Aplikasi</a>
+        <a href="{{ route('register.index', ['bulan' => $bulanAktif, 'tahun' => $tahunAktif]) }}" style="background: #475569; color: white; text-decoration: none; padding: 8px 16px; border-radius: 4px; font-size: 12px; display: inline-block;">⬅️ Kembali ke Aplikasi</a>
     </div>
 
+    <!-- KOP SURAT LAPORAN -->
     <div class="kop-surat">
         <h2>DINAS LINGKUNGAN HIDUP</h2>
         <h3>PEMERINTAH KABUPATEN / KOTA SIBEN</h3>
@@ -45,15 +53,16 @@
         PERIODE BULAN: {{ $bulanTeks }} {{ $tahunAktif }}
     </div>
 
+    <!-- TABEL DATA PENDAPATAN -->
     <table>
         <thead>
             <tr>
                 <th width="5%">No</th>
                 <th width="12%">Tanggal</th>
-                <th width="25%">Wajib Retribusi / Pembayar</th>
-                <th width="25%">Kategori</th>
+                <th width="23%">Wajib Retribusi / Pembayar</th>
+                <th width="22%">Kategori</th>
                 <th width="18%">Nomor STBP</th>
-                <th width="15%">Jumlah (Rp)</th>
+                <th width="20%">Jumlah (Rp)</th>
             </tr>
         </thead>
         <tbody>
@@ -78,6 +87,7 @@
         </tbody>
     </table>
 
+    <!-- REKAPITULASI NOMINAL -->
     <div style="width: 350px; margin-top: 20px; page-break-inside: avoid;">
         <p class="font-bold" style="margin-bottom: 5px;">Rekapitulasi Nominal Per Kategori:</p>
         <table>
@@ -100,25 +110,30 @@
         </table>
     </div>
 
+    <!-- TANDA TANGAN -->
     <div class="ttd-container">
         <div class="ttd-box">
             <p>Mengetahui,<br>Kepala Dinas Lingkungan Hidup</p>
             <div class="ttd-space"></div>
-            <p class="font-bold" style="text-decoration: underline;"><u>I Gede Putra Aryana, S.Sos, M.A.P</u></p>
+            <p class="font-bold"><u>I Gede Putra Aryana, S.Sos, M.A.P</u></p>
             <p style="margin-top: -10px;">NIP. 197005151993031010</p>
         </div>
         
         <div class="ttd-box">
             <p>Buleleng, {{ date('d') }} {{ $bulanTeks }} {{ $tahunAktif }}<br>Bendahara Penerimaan</p>
             <div class="ttd-space"></div>
-            <p class="font-bold" style="text-decoration: underline;">Nyoman Riani</p>
+            <p class="font-bold"><u>Nyoman Riani</u></p>
             <p style="margin-top: -10px;">NIP. 196901112007012022</p>
         </div>
     </div>
 
+    <!-- SCRIPT CETAK OTOMATIS -->
     <script>
         window.onload = function() {
-            window.print();
+            // Memberi jeda 100 milidetik agar CSS ter-render sempurna sebelum print dipicu
+            setTimeout(function() {
+                window.print();
+            }, 100);
         }
     </script>
 </body>
