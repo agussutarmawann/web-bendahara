@@ -38,7 +38,7 @@
 
     <div x-data="{ showDeleteModal: false, deleteUrl: '', isDeleting: false }" class="py-8">
         <div class="max-w-full mx-auto px-8 space-y-6">
-            
+
             <div class="p-5 bg-white shadow-sm border border-emerald-100 rounded-2xl flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <form method="GET" action="{{ route('register.index') }}" class="flex items-center gap-3">
                     <label for="bulan" class="text-sm font-semibold text-emerald-950">Pilih Periode:</label>
@@ -93,13 +93,13 @@
                             @forelse($registers as $data)
                             <tr class="hover:bg-emerald-50/20 transition">
                                 <td class="px-6 py-4 font-semibold text-gray-900 whitespace-nowrap">
-                                    {{ $data->tanggal->format('d/m/Y') }}
+                                    {{ \Carbon\Carbon::parse($data->tanggal)->format('d/m/Y') }}
                                 </td>
                                 <td class="px-6 py-4 text-gray-900 whitespace-nowrap font-medium">
                                     {{ $data->wajib_retribusi }}
                                 </td>
-                                <td class="px-6 py-4 text-gray-600">
-                                    {{ $data->kategori }}
+                                <td class="px-6 py-4 text-gray-600 font-medium">
+                                    {{ $data->objekRetribusi ? $data->objekRetribusi->nama_objek : $data->kategori }}
                                 </td>
                                 <td class="px-6 py-4 text-gray-600 font-mono">
                                     {{ $data->nomor_stbp ?? '-' }}
@@ -163,7 +163,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-between transition hover:shadow-md">
                         <div>
-                            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Persampahan</p>
+                            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">PKS</p>
                             <h4 class="text-lg font-bold text-emerald-950 mt-1">Rp {{ number_format($totalSampah, 0, ',', '.') }}</h4>
                         </div>
                         <div class="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center text-xl shadow-inner">🗑️</div>
@@ -179,7 +179,7 @@
 
                     <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-between transition hover:shadow-md">
                         <div>
-                            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Retribusi PDAM</p>
+                            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">PDAM</p>
                             <h4 class="text-lg font-bold text-emerald-950 mt-1">Rp {{ number_format($totalPdam, 0, ',', '.') }}</h4>
                         </div>
                         <div class="w-10 h-10 bg-sky-50 rounded-xl flex items-center justify-center text-xl shadow-inner">🚰</div>
@@ -187,7 +187,7 @@
 
                     <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-between transition hover:shadow-md">
                         <div>
-                            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Retribusi TPA</p>
+                            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">TPA Bengkala</p>
                             <h4 class="text-lg font-bold text-emerald-950 mt-1">Rp {{ number_format($totalTpa, 0, ',', '.') }}</h4>
                         </div>
                         <div class="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center text-xl shadow-inner">🚛</div>
@@ -230,7 +230,7 @@
                 <form :action="deleteUrl" method="POST" @submit="isDeleting = true" class="mt-5 flex space-x-3">
                     @csrf
                     @method('DELETE')
-                    
+
                     <button type="button"
                         x-show="!isDeleting"
                         @click="showDeleteModal = false"

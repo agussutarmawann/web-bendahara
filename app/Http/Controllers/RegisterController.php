@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Register;
+use App\Models\ObjekRetribusi;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -13,38 +14,54 @@ class RegisterController extends Controller
      */
     public function index(Request $request)
     {
-        // Jika user tidak memilih bulan, default-kan ke bulan saat ini (misal: Juli 2026)
+        // 1. Ambil filter bulan dan tahun aktif dari request (default bulan & tahun saat ini)
         $bulanAktif = $request->input('bulan', Carbon::now()->format('m'));
         $tahunAktif = $request->input('tahun', Carbon::now()->format('Y'));
 
-        // Mengambil data register pada bulan dan tahun terpilih, urutkan berdasarkan tanggal
-        $registers = Register::whereMonth('tanggal', $bulanAktif)
+        // 2. Mengambil data register pada bulan dan tahun terpilih dengan relasi objekRetribusi
+        $registers = Register::with('objekRetribusi')
+            ->whereMonth('tanggal', $bulanAktif)
             ->whereYear('tanggal', $tahunAktif)
             ->orderBy('tanggal', 'asc')
             ->get();
 
-        // 3. HITUNG AKUMULASI PER KATEGORI (Hanya untuk bulan & tahun yang aktif)
+        // 3. HITUNG AKUMULASI BERDASARKAN OBJEK RETRIBUSI SPESIFIK (Menggunakan Relasi)
+
+        // Card 1: PKS (PKS Pihak Ketiga)
         $totalSampah = Register::whereMonth('tanggal', $bulanAktif)
             ->whereYear('tanggal', $tahunAktif)
-            ->where('kategori', 'Pelayanan Persampahan')
+            ->whereHas('objekRetribusi', function ($q) {
+                $q->where('nama_objek', 'LIKE', '%PIHAK KETIGA%');
+            })
             ->sum('jumlah');
 
+        // Card 2: ASET DAERAH (RTH Bung Karno & Taman Kota)
         $totalAset = Register::whereMonth('tanggal', $bulanAktif)
             ->whereYear('tanggal', $tahunAktif)
-            ->where('kategori', 'Pemanfaatan Aset Daerah')
+            ->whereHas('objekRetribusi', function ($q) {
+                $q->where('kategori', 'LIKE', '%ASET DAERAH%');
+            })
             ->sum('jumlah');
 
+        // Card 3: PDAM (Perumda Tirta Hita)
         $totalPdam = Register::whereMonth('tanggal', $bulanAktif)
             ->whereYear('tanggal', $tahunAktif)
-            ->where('kategori', 'PDAM')
+            ->whereHas('objekRetribusi', function ($q) {
+                $q->where('nama_objek', 'LIKE', '%TIRTA HITA%');
+            })
             ->sum('jumlah');
 
-        $totalTpa = Register::wheremonth('tanggal', $bulanAktif)
+        // Card 4: TPA BENGKALA (Berdasarkan relasi Objek atau Nama Penyetor)
+        $totalTpa = Register::whereMonth('tanggal', $bulanAktif)
             ->whereYear('tanggal', $tahunAktif)
-            ->where('kategori', 'TPA')
+            ->where(function ($query) {
+                $query->whereHas('objekRetribusi', function ($q) {
+                    $q->where('nama_objek', 'LIKE', '%TPA%');
+                })->orWhere('wajib_retribusi', 'LIKE', '%TPA%');
+            })
             ->sum('jumlah');
 
-        // Total keseluruhan gabungan 4 kategori
+        // Total Keseluruhan
         $totalKeseluruhan = $totalSampah + $totalAset + $totalPdam + $totalTpa;
 
         // Mengirimkan data ke halaman view Blade
@@ -65,81 +82,139 @@ class RegisterController extends Controller
      */
     public function create()
     {
-        // KUNCI UTAMA: Paksa menggunakan format 4 digit 'Y' (Y kapital) -> 2026
         $tahunSekarang = Carbon::now()->format('Y');
 
-        // 1. Cari data terakhir di database yang tahunnya 2026
+        // 1. Cari data terakhir di database yang tahunnya berjalan
         $lastRegister = Register::whereYear('tanggal', $tahunSekarang)
             ->whereNotNull('nomor_stbp')
             ->where('nomor_stbp', '!=', '')
             ->orderBy('id', 'desc')
             ->first();
 
-        $nextNumber = 1; // Default jika belum ada data di tahun 2026
+        $nextNumber = 1;
 
         if ($lastRegister) {
-            // Ambil bagian nomor urut paling depan sebelum tanda '/'
             $parts = explode('/', $lastRegister->nomor_stbp);
             if (isset($parts[0]) && is_numeric($parts[0])) {
                 $nextNumber = (int)$parts[0] + 1;
             }
         }
 
-        // 2. Format nomor urut menjadi 3 digit (misal: 1 menjadi "001")
         $formattedNumber = str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
-
-        // 3. Gabungkan dengan format tahun 4 digit
         $nomorStbpOtomatis = "{$formattedNumber}/TBP/DLH/{$tahunSekarang}";
 
-        return view('register.create', compact('nomorStbpOtomatis'));
+        // 2. Ambil master data Objek Retribusi
+        $objekRetribusis = ObjekRetribusi::orderBy('kategori')->orderBy('nama_objek')->get();
+
+        return view('register.create', compact('nomorStbpOtomatis', 'objekRetribusis'));
     }
 
     /**
      * Menyimpan data harian baru ke database.
      */
-    public function store(Request $request) //Variable
+    public function store(Request $request)
     {
-        // Validasi inputan dari form
+        // 1. Validasi inputan dari form
         $validated = $request->validate([
-            'tanggal' => 'required|date',
-            'wajib_retribusi' => 'required|string|max:255',
-            'kategori' => 'required|in:Pelayanan Persampahan,Pemanfaatan Aset Daerah,PDAM,TPA',
-            'nomor_stbp' => 'nullable|string|unique:registers,nomor_stbp',
-            'jenis_penetapan' => 'required|in:penetapan,tanpa_penetapan',
-            'jumlah' => 'required|numeric|min:0,'
+            'tanggal'            => 'required|date',
+            'wajib_retribusi'    => 'required|string|max:255',
+            'objek_retribusi_id' => 'required|exists:objek_retribusis,id',
+            'nomor_stbp'         => 'nullable|string|unique:registers,nomor_stbp',
+            'jenis_penetapan'    => 'required|in:penetapan,tanpa_penetapan',
+            'jumlah'             => 'required|numeric|min:0',
         ]);
 
-        // Simpan data ke database
+        // 2. Otomatis isi kolom 'kategori' berdasarkan Objek Retribusi terpilih
+        $objek = ObjekRetribusi::find($request->objek_retribusi_id);
+        if ($objek) {
+            $validated['kategori'] = $objek->kategori;
+        }
+
+        // 3. Simpan data ke database
         Register::create($validated);
 
-        // Redirect kembali ke halaman utama register dengan pesan sukses
+        // 4. Redirect kembali ke halaman utama register dengan filter bulan & tahun transaksi
         return redirect()->route('register.index', [
             'bulan' => Carbon::parse($request->tanggal)->format('m'),
             'tahun' => Carbon::parse($request->tanggal)->format('Y'),
-        ])->with('success');
+        ])->with('success', 'Data transaksi pendapatan harian berhasil disimpan!');
     }
 
-
+    /**
+     * Mencetak Laporan Register Pendapatan.
+     */
     public function print(Request $request)
     {
-        // 1. Ambil filter bulan dan tahun aktif dari request (default bulan & tahun ini)
         $bulanAktif = $request->input('bulan', date('m'));
         $tahunAktif = $request->input('tahun', date('Y'));
 
-        // 2. Ambil data harian untuk dicetak
-        $registers = Register::whereMonth('tanggal', $bulanAktif)
+        $registers = Register::with('objekRetribusi')
+            ->whereMonth('tanggal', $bulanAktif)
             ->whereYear('tanggal', $tahunAktif)
             ->orderBy('tanggal', 'asc')
             ->get();
 
-        // 3. Hitung akumulasi untuk tabel rekapitulasi di halaman cetak
-        $totalSampah = Register::whereMonth('tanggal', $bulanAktif)->whereYear('tanggal', $tahunAktif)->where('kategori', 'Pelayanan Persampahan')->sum('jumlah');
-        $totalAset = Register::whereMonth('tanggal', $bulanAktif)->whereYear('tanggal', $tahunAktif)->where('kategori', 'Pemanfaatan Aset Daerah')->sum('jumlah');
-        $totalPdam = Register::whereMonth('tanggal', $bulanAktif)->whereYear('tanggal', $tahunAktif)->where('kategori', 'PDAM')->sum('jumlah');
-        $totalTpa = Register::whereMonth('tanggal', $bulanAktif)->whereYear('tanggal', $tahunAktif)->where('kategori', 'TPA')->sum('jumlah');
+        // 3. HITUNG AKUMULASI (Mengecek Relasi Objek DAN Nama Penyetor Manual)
+
+        // Card 1: PKS / Persampahan Pihak Ketiga (Termasuk SMKN, Sekolah, Toko, PKS)
+        $totalSampah = Register::whereMonth('tanggal', $bulanAktif)
+            ->whereYear('tanggal', $tahunAktif)
+            ->where(function ($q) {
+                $q->whereHas('objekRetribusi', function ($sub) {
+                    $sub->where('nama_objek', 'LIKE', '%PIHAK KETIGA%');
+                })
+                    // Jika objek_retribusi_id kosong, cek kategorinya atau nama penyetor
+                    ->orWhere(function ($sub) {
+                        $sub->where('kategori', 'LIKE', '%PERSAMPAHAN%')
+                            ->where('wajib_retribusi', 'NOT LIKE', '%PDAM%')
+                            ->where('wajib_retribusi', 'NOT LIKE', '%TIRTA HITA%')
+                            ->where('wajib_retribusi', 'NOT LIKE', '%TPA%')
+                            ->where('wajib_retribusi', 'NOT LIKE', '%BENGKALA%');
+                    });
+            })
+            ->sum('jumlah');
+
+        // Card 2: ASET DAERAH (TBK, TAMKOT, RTH Bung Karno, Taman Kota)
+        $totalAset = Register::whereMonth('tanggal', $bulanAktif)
+            ->whereYear('tanggal', $tahunAktif)
+            ->where(function ($q) {
+                $q->whereHas('objekRetribusi', function ($sub) {
+                    $sub->where('kategori', 'LIKE', '%ASET DAERAH%');
+                })
+                    ->orWhere('kategori', 'LIKE', '%ASET DAERAH%')
+                    ->orWhere('wajib_retribusi', 'LIKE', '%TBK%')
+                    ->orWhere('wajib_retribusi', 'LIKE', '%TAMKOT%')
+                    ->orWhere('wajib_retribusi', 'LIKE', '%RTH%');
+            })
+            ->sum('jumlah');
+
+        // Card 3: PDAM (Perumda Tirta Hita / Penyetor PDAM)
+        $totalPdam = Register::whereMonth('tanggal', $bulanAktif)
+            ->whereYear('tanggal', $tahunAktif)
+            ->where(function ($q) {
+                $q->whereHas('objekRetribusi', function ($sub) {
+                    $sub->where('nama_objek', 'LIKE', '%TIRTA HITA%');
+                })
+                    ->orWhere('wajib_retribusi', 'LIKE', '%PDAM%')
+                    ->orWhere('wajib_retribusi', 'LIKE', '%TIRTA HITA%');
+            })
+            ->sum('jumlah');
+
+        // Card 4: TPA BENGKALA
+        $totalTpa = Register::whereMonth('tanggal', $bulanAktif)
+            ->whereYear('tanggal', $tahunAktif)
+            ->where(function ($q) {
+                $q->whereHas('objekRetribusi', function ($sub) {
+                    $sub->where('nama_objek', 'LIKE', '%TPA%');
+                })
+                    ->orWhere('wajib_retribusi', 'LIKE', '%TPA%')
+                    ->orWhere('wajib_retribusi', 'LIKE', '%BENGKALA%');
+            })
+            ->sum('jumlah');
+
+        // Total Keseluruhan
         $totalKeseluruhan = $totalSampah + $totalAset + $totalPdam + $totalTpa;
 
-        // Array nama bulan untuk mempermudah penamaan judul laporan cetak
         $namaBulan = [
             '01' => 'Januari',
             '02' => 'Februari',
@@ -174,11 +249,10 @@ class RegisterController extends Controller
      */
     public function edit(string $id)
     {
-        // Mengambil data berdasarkan ID, jika tidak ada otomatis error 404
         $register = Register::findOrFail($id);
+        $objekRetribusis = ObjekRetribusi::orderBy('kategori')->orderBy('nama_objek')->get();
 
-        // 2. Kirim data ke view edit
-        return view('register.edit', compact('register'));
+        return view('register.edit', compact('register', 'objekRetribusis'));
     }
 
     /**
@@ -186,28 +260,30 @@ class RegisterController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        // 1. Validasi data inputan terlebih dahulu
         $request->validate([
-            'tanggal' => 'required|date',
-            'wajib_retribusi' => 'required|string|max:255',
-            'kategori' => 'required|string',
-            'jumlah' => 'required|numeric|min:0',
+            'tanggal'            => 'required|date',
+            'wajib_retribusi'    => 'required|string|max:255',
+            'objek_retribusi_id' => 'required|exists:objek_retribusis,id',
+            'jenis_penetapan'    => 'required|in:penetapan,tanpa_penetapan',
+            'jumlah'             => 'required|numeric|min:0',
         ]);
 
-        // 2. Cari data lama di database
         $register = Register::findOrFail($id);
+        $objek = ObjekRetribusi::find($request->objek_retribusi_id);
 
-        // 3. Update data dengan data baru dari form
         $register->update([
-            'tanggal' => $request->tanggal,
-            'wajib_retribusi' => $request->wajib_retribusi,
-            'kategori' => $request->kategori,
-            'jumlah' => $request->jumlah,
+            'tanggal'            => $request->tanggal,
+            'wajib_retribusi'    => $request->wajib_retribusi,
+            'objek_retribusi_id' => $request->objek_retribusi_id,
+            'kategori'           => $objek ? $objek->kategori : $register->kategori,
+            'jenis_penetapan'    => $request->jenis_penetapan,
+            'jumlah'             => $request->jumlah,
         ]);
 
-        // 4. Redirect kembali ke halaman utama dengan Flash Session Sukses
-        return redirect()->route('register.index')
-            ->with('success', 'Data transaksi berhasil diperbaharui!');
+        return redirect()->route('register.index', [
+            'bulan' => Carbon::parse($request->tanggal)->format('m'),
+            'tahun' => Carbon::parse($request->tanggal)->format('Y'),
+        ])->with('success', 'Data transaksi berhasil diperbaharui!');
     }
 
     /**
@@ -215,13 +291,9 @@ class RegisterController extends Controller
      */
     public function destroy(string $id)
     {
-        // 1. Cari data yang akan dihapus
-        $register = Register::findorFail($id);
-
-        // 2. Eksekusi perintah hapus
+        $register = Register::findOrFail($id);
         $register->delete();
 
-        // 3. Kirim status sukses kembali ke halaman tabel
         return redirect()->route('register.index')
             ->with('success', 'Data berhasil dihapus dari sistem!');
     }

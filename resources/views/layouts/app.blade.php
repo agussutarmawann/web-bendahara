@@ -46,7 +46,7 @@
                     <span class="sidebar-text transition-opacity duration-200">Register Pendapatan</span>
                 </a>
 
-                <a href="#" class="flex items-center space-x-3 px-4 py-2.5 rounded-xl text-gray-300 hover:bg-emerald-900/50 hover:text-white transition font-medium text-sm">
+                <a href="{{ route('target-realisasi.index') }}" class="flex items-center space-x-3 px-4 py-2.5 rounded-xl text-gray-300 hover:bg-emerald-900/50 hover:text-white transition font-medium text-sm">
                     <span class="text-lg">🎯</span>
                     <span class="sidebar-text transition-opacity duration-200">Target & Realisasi</span>
                 </a>

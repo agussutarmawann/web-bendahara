@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -18,8 +19,15 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         User::factory()->create([
-            'name' => 'Test User',
+            'name' => 'Gede Agus Sutarmawan',
+            'nip' => '200008262025061003', // Tambahkan kolom NIP di sini
             'email' => 'test@example.com',
+            'password' => Hash::make('12345678'),
+        ]);
+
+        $this->call([
+            ObjekRetribusiSeeder::class,
+            TargetRetribusiSeeder::class,
         ]);
     }
 }

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\TargetRealisasiController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -30,6 +31,10 @@ Route::middleware('auth')->group(function () {
     Route::put('/register-pendapatan{id}', [RegisterController::class, 'update'])->name('register.update');
     // Memproses Hapus Data Permanen (Destroy - Menggunakan Metode DELETE)
     Route::delete('/register-pendapatan{id}', [RegisterController::class, 'destroy'])->name('register.destroy');
+
+
+    Route::resource('register', RegisterController::class);
+    Route::get('target-realisasi', [TargetRealisasiController::class, 'index'])->name('target-realisasi.index');
 });
-    
+
 require __DIR__ . '/auth.php';

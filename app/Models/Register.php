@@ -27,4 +27,11 @@ class Register extends Model
         'tanggal' => 'date',
         'jumlah' => 'decimal:2',
     ];
+
+    protected $guarded =[];
+
+    public function objekRetribusi()
+    {
+        return $this->belongsTo(ObjekRetribusi::class, 'objek_retribusi_id');
+    }
 }

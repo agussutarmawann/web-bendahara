@@ -45,12 +45,17 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <x-input-label for="kategori" :value="__('Kategori Retribusi')" class="text-emerald-950 font-semibold" />
-                                <select id="kategori" name="kategori" class="mt-1 block w-full border-gray-300 focus:border-emerald-500 focus:ring-emerald-500 rounded-xl shadow-sm text-sm" required>
-                                    <option value="" disabled selected>-- Pilih Kategori --</option>
-                                    <option value="Pelayanan Persampahan" {{ old('kategori') == 'Pelayanan Persampahan' ? 'selected' : '' }}>🗑️ Pelayanan Persampahan</option>
-                                    <option value="Pemanfaatan Aset Daerah" {{ old('kategori') == 'Pemanfaatan Aset Daerah' ? 'selected' : '' }}>🏢 Pemanfaatan Aset Daerah</option>
-                                    <option value="PDAM" {{ old('kategori') == 'PDAM' ? 'selected' : '' }}>🚰 PDAM</option>
-                                    <option value="TPA" {{ old('kategori') == 'TPA' ? 'selected' : '' }}>🚛 TPA</option>
+                                <select id="objek_retribusi_id" name="objek_retribusi_id" class="mt-1 block w-full border-gray-300 focus:border-emerald-500 focus:ring-emerald-500 rounded-xl shadow-sm text-sm" required>
+                                    <option value="" disabled selected>-- Pilih Objek Retribusi --</option>
+                                    @foreach($objekRetribusis->groupBy('kategori') as $kategori => $items)
+                                        <optgroup label="{{ $kategori }}">
+                                            @foreach($items as $objek)
+                                                <option value="{{ $objek->id }}" {{ old('objek_retribusi_id') == $objek->id ? 'selected' : '' }}>
+                                                    {{ $objek->nama_objek }}
+                                                </option>
+                                            @endforeach
+                                        </optgroup>
+                                    @endforeach
                                 </select>
                                 <x-input-error class="mt-2" :messages="$errors->get('kategori')" />
                             </div>
