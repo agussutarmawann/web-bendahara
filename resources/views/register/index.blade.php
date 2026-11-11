@@ -36,8 +36,8 @@
     </div>
     @endif
 
-    <div x-data="{ showDeleteModal: false, deleteUrl: '', isDeleting: false }" class="py-8">
-        <div class="max-w-full mx-auto px-8 space-y-6">
+    <div x-data="{ showDeleteModal: false, deleteUrl: '', isDeleting: false }" class="pt-0 pb-3">
+        <div class="max-w-full mx-auto space-y-4">
 
             <div class="p-5 bg-white shadow-sm border border-emerald-100 rounded-2xl flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <form method="GET" action="{{ route('register.index') }}" class="flex items-center gap-3">

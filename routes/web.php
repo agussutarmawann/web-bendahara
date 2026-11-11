@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\RealisasiController;
 use App\Http\Controllers\TargetRealisasiController;
 use Illuminate\Support\Facades\Route;
 
@@ -35,6 +36,8 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('register', RegisterController::class);
     Route::get('target-realisasi', [TargetRealisasiController::class, 'index'])->name('target-realisasi.index');
+
+    Route::get('realisasi', [RealisasiController::class, 'index'])->name('realisasi.index');
 });
 
 require __DIR__ . '/auth.php';

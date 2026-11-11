@@ -12,4 +12,9 @@ class ObjekRetribusi extends Model
     {
         return $this->hasMany(Register::class, 'objek_retribusi_id');
     }
+
+    public function targetRetribusis()
+    {
+        return $this->hasMany(TargetRetribusi::class, 'objek_retribusi_id');
+    }
 }
