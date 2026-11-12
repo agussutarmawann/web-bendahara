@@ -59,7 +59,7 @@
                         🔍
                     </div>
                     <input type="text" x-model="searchQuery" placeholder="Cari menu..."
-                        class="w-full pl-8 pr-11 py-1.5 text-sm bg-white border border-slate-300/80 p-3 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.16)] rounded-tr rounded-bl rounded-br-2xl rounded-tl-2xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-medium placeholder-slate-400 transition">
+                        class="w-full pl-8 pr-11 py-1.5 text-sm bg-white border border-slate-300/80 p-3 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.16)] rounded-tl-2xl rounded-tr rounded-bl rounded-br-2xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-medium placeholder-slate-400 transition">
                     <span
                         class="absolute right-2 px-1 py-0.5 text-[8px] font-bold text-slate-400 bg-slate-100 border border-slate-200 rounded-md">
                         Ctrl K
@@ -83,7 +83,7 @@
                         class="sidebar-link flex items-center justify-between px-2.5 py-1.5 rounded-tl-2xl rounded-tr rounded-bl rounded-br-2xl transition-all duration-200 font-semibold text-sm {{ request()->routeIs('dashboard') ? 'bg-emerald-800 text-white border border-slate-300 shadow-md shadow-emerald-700/30' : 'text-slate-600 border border-transparent hover:border-emerald-300 hover:bg-white hover:text-emerald-700 hover:shadow-[0_8px_20px_rgba(16,185,129,0.25)] ease-out hover:translate-x-1' }} ">
                         <div class="flex items-center space-x-2.5 min-w-0">
                             <span
-                                class="w-7 h-7 rounded-tl-lg rounded-tr rounded-bl rounded-br-lg border border-slate-300 shadow-md {{ request()->routeIs('dashboard') ? 'bg-white/15 border-white/30' : 'bg-white text-emerald-700 border-transparent' }} flex items-center justify-center text-sm shrink-0 transition">
+                                class="w-7 h-7 rounded-tl-lg rounded-tr rounded-bl rounded-br-lg border shadow-md {{ request()->routeIs('dashboard') ? 'bg-white/15 border-white/30' : 'bg-white text-emerald-700 border border-slate-300' }} flex items-center justify-center text-sm shrink-0 transition">
                                 🏠
                             </span>
                             <span class="sidebar-text truncate">Dashboard</span>
@@ -114,7 +114,7 @@
                         <div class="flex items-center space-x-2.5 min-w-0">
                             <!-- WADAH IKON LENGKUNG SQUIRCLE -->
                             <span
-                                class="w-7 h-7 rounded-tl-lg rounded-tr rounded-bl rounded-br-lg border border-slate-300 shadow-md {{ request()->routeIs('register.*') ? 'bg-white/15 border-white/30' : 'bg-white text-emerald-700 border border-transparent' }} flex items-center justify-center text-sm shrink-0 transition">
+                                class="w-7 h-7 rounded-tl-lg rounded-tr rounded-bl rounded-br-lg border shadow-md {{ request()->routeIs('register.*') ? 'bg-white/15 border-white/30' : 'bg-white text-emerald-700 border border-slate-300' }} flex items-center justify-center text-sm shrink-0 transition">
                                 📝
                             </span>
                             <span class="sidebar-text truncate">Register Pendapatan</span>
@@ -132,7 +132,7 @@
                         class="sidebar-link flex items-center justify-between px-2.5 py-2 transition-all duration-200 font-semibold text-sm {{ request()->routeIs('target-realisasi.*') ? 'bg-emerald-800 text-white rounded-tl-2xl rounded-tr rounded-bl rounded-br-2xl shadow-md shadow-emerald-700/30' : 'text-slate-600 border border-transparent rounded-tl-2xl rounded-tr rounded-bl rounded-br-2xl  hover:border-emerald-300 hover:bg-white hover:text-emerald-700 hover:shadow-[0_8px_20px_rgba(16,185,129,0.2)] ease-out hover:translate-x-1' }}">
                         <div class="flex items-center space-x-2.5 min-w-0">
                             <span
-                                class="w-7 h-7 rounded-tl-lg rounded-tr rounded-bl rounded-br-lg border border-slate-300 shadow-md {{ request()->routeIs('target-realisasi.*') ? 'bg-white/15 border-white/30' : 'bg-white text-emerald-700 border-transparent' }} flex items-center justify-center text-sm shrink-0 transition">
+                                class="w-7 h-7 rounded-tl-lg rounded-tr rounded-bl rounded-br-lg shadow-md {{ request()->routeIs('target-realisasi.*') ? 'bg-white/15 border-white/30' : 'bg-white text-emerald-700 border border-slate-300' }} flex items-center justify-center text-sm shrink-0 transition">
                                 🎯
                             </span>
                             <span class="sidebar-text truncate">Target & Realisasi</span>
@@ -149,7 +149,7 @@
                         class="sidebar-link flex items-center justify-between px-2.5 py-2 transition-all duration-200 font-semibold text-sm {{ request()->routeIs('realisasi.*') ? 'bg-emerald-800 text-white rounded-tl-2xl rounded-tr rounded-bl rounded-br-2xl shadow-md shadow-emerald-700/30' : 'text-slate-600 border border-transparent rounded-tl-2xl rounded-tr rounded-bl rounded-br-2xl hover:border-emerald-300 hover:bg-white hover:text-emerald-700 hover:shadow-[0_8px_20px_rgba(16,185,129,0.2)] ease-out hover:translate-x-1' }} ">
                         <div class="flex items-center space-x-2.5 min-w-0">
                             <span
-                                class="w-7 h-7 stroke[2] rounded-tl-lg rounded-tr rounded-bl rounded-br-lg border border-slate-300 shadow-md {{ request()->routeIs('realisasi.*') ? 'bg-white/15 border-white/30' : 'bg-white text-emerald-700 border-transparent' }} flex items-center justify-center text-sm shrink-0 transition">
+                                class="w-7 h-7 stroke-[2] rounded-tl-lg rounded-tr rounded-bl rounded-br-lg  shadow-md  {{ request()->routeIs('realisasi.*') ? 'bg-white/15 border-white/30' : 'bg-white text-emerald-700 border border-slate-300' }} flex items-center justify-center text-sm shrink-0 transition">
                                 📈
                             </span>
                             <span class="sidebar-text truncate">Realisasi (LRA)</span>
@@ -175,7 +175,7 @@
                         class="sidebar-link flex items-center justify-between px-2.5 py-2 transition-all duration-200 font-semibold text-sm {{ request()->routeIs('stbp.*') ? 'bg-emerald-800 text-white rounded-tl-2xl rounded-tr rounded-bl rounded-br-2xl shadow-md shadow-emerald-700/30' : 'text-slate-600 border border-transparent rounded-tl-2xl rounded-tr rounded-bl rounded-br-2xl hover:border-emerald-300 hover:bg-white hover:text-emerald-700 hover:shadow-[0_8px_20px_rgba(16,185,129,0.2)] ease-out hover:translate-x-1' }}">
                         <div class="flex items-center space-x-2.5 min-w-0">
                             <span
-                                class="w-7 h-7 rounded-tl-lg rounded-tr rounded-bl rounded-br-lg border border-slate-300 shadow-md bg-white text-emerald-700 flex items-center justify-center text-sm shrink-0">
+                                class="w-7 h-7 stroke[2] rounded-tl-lg rounded-tr rounded-bl rounded-br-lg border border-slate-300 shadow-md bg-white text-emerald-700 flex items-center justify-center text-sm shrink-0">
                                 📂
                             </span>
                             <span class="sidebar-text truncate">STBP</span>
@@ -244,14 +244,14 @@
             <!-- TOMBOL KELUAR -->
             <div class="pt-2 mt-auto">
                 <div
-                    class="sidebar-card bg-white rounded-tr rounded-bl rounded-br-2xl rounded-tl-2xl] border border-rose-100/60 p-2 transition-all duration-300 ease-out hover:translate-x-1">
-                    <button type="button" @click="$dispatch('trigger-logout')" title="Keluar Sistem"
-                        class="sidebar-link w-full flex items-center space-x-2.5 px-2.5 py-1.5 rounded-[16px] text-rose-600 border border-transparent hover:border-rose-200 hover:bg-rose-50/50 hover:shadow-[0_8px_20px_rgba(244,63,94,0.15)] font-bold text-sm transition-all duration-200">
+                    class="sidebar-card bg-white rounded-tl-2xl rounded-tr rounded-bl rounded-br-2xl border border-rose-100/60 p-2 transition-all duration-300 ease-out hover:translate-x-1">
+                    <button type="button" @click="$dispatch('trigger-logout')" title="Keluar"
+                        class="sidebar-link w-full flex items-center space-x-2.5 px-2.5 py-1.5 rounded-tr rounded-bl rounded-br-2xl rounded-tl-2xl text-rose-600 border border-transparent hover:border-rose-200 hover:bg-rose-50/50 hover:shadow-[0_8px_20px_rgba(244,63,94,0.15)] font-bold text-sm transition-all duration-200">
                         <span
-                            class="w-7 h-7 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center text-sm shrink-0 border border-rose-100">
+                            class="w-7 h-7 rounded-tl-lg rounded-tr rounded-bl rounded-br-lg bg-white shadow-md  text-rose-600 flex items-center justify-center text-sm shrink-0 border border-rose-100">
                             🚪
                         </span>
-                        <span class="sidebar-text truncate">Keluar Sistem</span>
+                        <span class="sidebar-text truncate">Keluar</span>
                     </button>
                 </div>
             </div>
